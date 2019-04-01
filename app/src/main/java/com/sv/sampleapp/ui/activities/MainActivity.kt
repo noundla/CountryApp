@@ -1,18 +1,18 @@
 package com.sv.sampleapp.ui.activities
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Gravity
+import com.sv.sampleapp.CountryApp
+import com.sv.sampleapp.R
 import com.sv.sampleapp.adapter.CountryListAdapter
 import com.sv.sampleapp.adapter.CountrySelectionListener
-import com.sv.sampleapp.R
-import com.sv.sampleapp.model.CountryDataStore
+import com.sv.sampleapp.component.AppComponent
 import com.sv.sampleapp.model.CountryListResponse
-import com.sv.sampleapp.network.AppServices
-import com.sv.sampleapp.network.CountryService
+import com.sv.sampleapp.model.datastore.CountryDataStore
 import com.sv.sampleapp.ui.fragments.CountryInfoFragment
 import com.sv.sampleapp.ui.fragments.WeatherDashboardFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,14 +26,18 @@ class MainActivity : AppCompatActivity(), CountrySelectionListener {
         const val EXTRA_SELECT_COUNTRY_POSITION = "EXTRA_SELECT_COUNTRY_POSITION"
     }
 
-    lateinit var countyService: CountryService
+    private lateinit var appComponent: AppComponent
+    private lateinit var countryDataStore: CountryDataStore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initUI()
-        countyService = AppServices.getCountyService()
 
-        if (CountryDataStore.countyList == null) {
+        appComponent = (application as CountryApp).getAppComponent()
+        countryDataStore = appComponent.getCountryDataStore()
+
+
+        if (countryDataStore.countyList == null) {
             fetchCountyList()
         } else {
             loadFromCache()
@@ -64,12 +68,13 @@ class MainActivity : AppCompatActivity(), CountrySelectionListener {
 
     fun loadFromCache() {
         loadNavigation()
-        loadCountryFragment(CountryDataStore.lastSelectedCountyPosition)
-        loadWeatherFragment(CountryDataStore.lastSelectedCountyPosition)
+
+        loadCountryFragment(countryDataStore.lastSelectedCountyPosition)
+        loadWeatherFragment(countryDataStore.lastSelectedCountyPosition)
     }
 
     private fun fetchCountyList() {
-        val call = countyService.getCountryList()
+        val call = appComponent.getCountryService().getCountryList()
         call.enqueue(object : Callback<CountryListResponse> {
             override fun onFailure(call: Call<CountryListResponse>, t: Throwable) {
                 // show error with snackbar
@@ -79,8 +84,8 @@ class MainActivity : AppCompatActivity(), CountrySelectionListener {
             override fun onResponse(call: Call<CountryListResponse>, response: Response<CountryListResponse>) {
                 val countryListResponse = response.body()
                 if (response.isSuccessful && countryListResponse != null) {
-                    CountryDataStore.countyList = countryListResponse
-                    CountryDataStore.lastSelectedCountyPosition = 0
+                    countryDataStore.countyList = countryListResponse
+                    countryDataStore.lastSelectedCountyPosition = 0
                     loadFromCache()
                 }
             }
@@ -88,11 +93,11 @@ class MainActivity : AppCompatActivity(), CountrySelectionListener {
     }
 
     private fun loadNavigation() {
-        recyclerView.adapter = CountryListAdapter(CountryDataStore.countyList, this)
+        recyclerView.adapter = CountryListAdapter(countryDataStore.countyList, this)
     }
 
     override fun onCountrySelected(position: Int) {
-        CountryDataStore.lastSelectedCountyPosition = position
+        countryDataStore.lastSelectedCountyPosition = position
         //TODO: Refactor this to send data directly to loaded fragments instead of replacing again.
         loadCountryFragment(position)
         loadWeatherFragment(position)
@@ -110,7 +115,7 @@ class MainActivity : AppCompatActivity(), CountrySelectionListener {
     }
 
     private fun loadWeatherFragment(position: Int) {
-        val item = CountryDataStore.getCountryItem(position)
+        val item = countryDataStore.getCountryItem(position)
         val lat = item?.latlng?.get(0)
         val lon = item?.latlng?.get(1)
 
@@ -128,7 +133,7 @@ class MainActivity : AppCompatActivity(), CountrySelectionListener {
 
     override fun onStop() {
         super.onStop()
-        CountryDataStore.lastVisibleTimeInMillis = System.currentTimeMillis()
+        countryDataStore.lastVisibleTimeInMillis = System.currentTimeMillis()
         //close the activity to launch it freshly on reopen
         finish()
     }

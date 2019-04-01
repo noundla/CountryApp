@@ -5,24 +5,28 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
-data class Coord(@SerializedName("lon")
-                 val lon: Double = 0.0,
-                 @SerializedName("lat")
-                 val lat: Double = 0.0)
+data class Coord(
+    @SerializedName("lon")
+    val lon: Double = 0.0,
+    @SerializedName("lat")
+    val lat: Double = 0.0
+)
 
 
-data class Temp(@SerializedName("min")
-                val min: Double = 0.0,
-                @SerializedName("max")
-                val max: Double = 0.0,
-                @SerializedName("eve")
-                val eve: Double = 0.0,
-                @SerializedName("night")
-                val night: Double = 0.0,
-                @SerializedName("day")
-                val day: Double = 0.0,
-                @SerializedName("morn")
-                val morn: Double = 0.0) : Parcelable {
+data class Temp(
+    @SerializedName("min")
+    val min: Double = 0.0,
+    @SerializedName("max")
+    val max: Double = 0.0,
+    @SerializedName("eve")
+    val eve: Double = 0.0,
+    @SerializedName("night")
+    val night: Double = 0.0,
+    @SerializedName("day")
+    val day: Double = 0.0,
+    @SerializedName("morn")
+    val morn: Double = 0.0
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readDouble(),
         parcel.readDouble(),
@@ -58,14 +62,16 @@ data class Temp(@SerializedName("min")
 }
 
 
-data class WeatherItem(@SerializedName("icon")
-                       val icon: String = "",
-                       @SerializedName("description")
-                       val description: String = "",
-                       @SerializedName("main")
-                       val main: String = "",
-                       @SerializedName("id")
-                       val id: Int = 0) : Parcelable {
+data class WeatherItem(
+    @SerializedName("icon")
+    val icon: String = "",
+    @SerializedName("description")
+    val description: String = "",
+    @SerializedName("main")
+    val main: String = "",
+    @SerializedName("id")
+    val id: Int = 0
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -97,46 +103,52 @@ data class WeatherItem(@SerializedName("icon")
 }
 
 
-data class WeatherResponse(@SerializedName("city")
-                           val city: City,
-                           @SerializedName("cnt")
-                           val cnt: Int = 0,
-                           @SerializedName("cod")
-                           val cod: String = "",
-                           @SerializedName("message")
-                           val message: Double = 0.0,
-                           @SerializedName("list")
-                           val list: List<ListItem>?)
+data class WeatherResponse(
+    @SerializedName("city")
+    val city: City,
+    @SerializedName("cnt")
+    val cnt: Int = 0,
+    @SerializedName("cod")
+    val cod: String = "",
+    @SerializedName("message")
+    val message: Double = 0.0,
+    @SerializedName("list")
+    val list: List<ListItem>?
+)
 
 
-data class City(@SerializedName("country")
-                val country: String = "",
-                @SerializedName("coord")
-                val coord: Coord,
-                @SerializedName("name")
-                val name: String = "",
-                @SerializedName("id")
-                val id: Int = 0,
-                @SerializedName("population")
-                val population: Int = 0)
+data class City(
+    @SerializedName("country")
+    val country: String = "",
+    @SerializedName("coord")
+    val coord: Coord,
+    @SerializedName("name")
+    val name: String = "",
+    @SerializedName("id")
+    val id: Int = 0,
+    @SerializedName("population")
+    val population: Int = 0
+)
 
 
-data class ListItem(@SerializedName("dt")
-                    val dt: Long = 0,
-                    @SerializedName("temp")
-                    val temp: Temp,
-                    @SerializedName("deg")
-                    val deg: Int = 0,
-                    @SerializedName("weather")
-                    val weather: List<WeatherItem>?,
-                    @SerializedName("humidity")
-                    val humidity: Int = 0,
-                    @SerializedName("pressure")
-                    val pressure: Double = 0.0,
-                    @SerializedName("clouds")
-                    val clouds: Int = 0,
-                    @SerializedName("speed")
-                    val speed: Double = 0.0) : Parcelable {
+data class ListItem(
+    @SerializedName("dt")
+    val dt: Long = 0,
+    @SerializedName("temp")
+    val temp: Temp,
+    @SerializedName("deg")
+    val deg: Int = 0,
+    @SerializedName("weather")
+    val weather: List<WeatherItem>?,
+    @SerializedName("humidity")
+    val humidity: Int = 0,
+    @SerializedName("pressure")
+    val pressure: Double = 0.0,
+    @SerializedName("clouds")
+    val clouds: Int = 0,
+    @SerializedName("speed")
+    val speed: Double = 0.0
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readParcelable(Temp::class.java.classLoader),

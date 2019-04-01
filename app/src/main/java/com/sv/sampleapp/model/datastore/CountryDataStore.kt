@@ -1,13 +1,14 @@
-package com.sv.sampleapp.model
+package com.sv.sampleapp.model.datastore
 
-object CountryDataStore {
-    @JvmStatic
+import com.sv.sampleapp.model.CountryItem
+
+
+class CountryDataStore {
+
     var countyList: ArrayList<CountryItem>? = null
 
-    @JvmStatic
     var lastSelectedCountyPosition = 0
 
-    @JvmStatic
     var lastVisibleTimeInMillis: Long = 0
 
     fun getCountryItem(position: Int): CountryItem? {

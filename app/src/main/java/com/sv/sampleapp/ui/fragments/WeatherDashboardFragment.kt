@@ -4,17 +4,17 @@ package com.sv.sampleapp.ui.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.sv.sampleapp.CountryApp
 
 import com.sv.sampleapp.R
+import com.sv.sampleapp.component.AppComponent
 import com.sv.sampleapp.model.ListItem
 import com.sv.sampleapp.model.WeatherResponse
-import com.sv.sampleapp.network.AppServices
-import com.sv.sampleapp.network.WeatherService
+import com.sv.sampleapp.network.api.WeatherService
 import kotlinx.android.synthetic.main.fragment_weather_dashboard.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,9 +31,12 @@ class WeatherDashboardFragment : Fragment() {
     var latitude: Double? = null
     var longitude: Double? = null
 
+    private lateinit var appComponent: AppComponent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        weatherService = AppServices.getWeatherService()
+        appComponent = (activity?.application as CountryApp).getAppComponent()
+        weatherService = appComponent.getWeatherService()
     }
 
 
